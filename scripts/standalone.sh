@@ -40,16 +40,14 @@ pull_image() {
 # Setup docker daemon and listen port 2375
 #
 MASTER_NODE=${MASTER_NODE:-"127.0.0.1"}
+echo_r "MASTER_NODE is ${MASTER_NODE}"
 
 # Install docker & docker-compose if necessary
 echo_b "Make sure docker and docker-compose are installed"
 command -v docker >/dev/null 2>&1 || { echo_r >&2 "No docker-engine found, try installing"; curl -sSL https://get.docker.com/ | sh; }
 command -v docker-compose >/dev/null 2>&1 || { echo_r >&2 "No docker-compose found, try installing"; sudo pip install 'docker-compose>=1.17.0'; }
-
-# If docker daemon TCP is not enabled, then enable it
-sudo systemctl stop docker.service
-sudo dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --api-cors-header='*' --default-ulimit=nofile=8192:16384 --default-ulimit=nproc=8192:16384 -D &
-
+# run a container to monitor docker daemon
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 127.0.0.1:2375:2375 bobrik/socat TCP-LISTEN:2375,fork UNIX-CONNECT:/var/run/docker.sock
 
 #
 # Mount master artifacts into work node
