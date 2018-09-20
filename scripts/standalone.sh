@@ -43,7 +43,7 @@ MASTER_NODE=${MASTER_NODE:-"127.0.0.1"}
 
 # Install docker & docker-compose if necessary
 echo_b "Make sure docker and docker-compose are installed"
-command -v docker >/dev/null 2>&1 || { echo_r >&2 "No docker-engine found, try installing"; curl -sSL https://get.docker.com/ | sh; sudo dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --api-cors-header='*' --default-ulimit=nofile=8192:16384 --default-ulimit=nproc=8192:16384 -D & }
+command -v docker >/dev/null 2>&1 || { echo_r >&2 "No docker-engine found, try installing"; curl -sSL https://get.docker.com/ | sh; }
 command -v docker-compose >/dev/null 2>&1 || { echo_r >&2 "No docker-compose found, try installing"; sudo pip install 'docker-compose>=1.17.0'; }
 
 # If docker daemon TCP is not enabled, then enable it
